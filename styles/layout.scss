@@ -1,8 +1,25 @@
 // See: https://sass-lang.com/
 
+// style textarea
 .shadow-textarea textarea.form-control::placeholder {
   font-weight: 300;
 }
 .shadow-textarea textarea.form-control {
   padding-left: 0.8rem;
+}
+.item {
+  float: left;
+  padding: 2px;
+  margin-right: 10%;
+  margin-bottom: 15px;
+  p{
+    margin-top: 5px;
+  }
+}
+.containers
+{
+  margin-top: 10%;
+  width: 55%;
+  height:200px;
+  margin: 0 auto;
 }
