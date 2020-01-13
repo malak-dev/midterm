@@ -18,13 +18,7 @@
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
 
   <script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
-  <script>
-    $(document).ready(function () {
-      $("submit").click(function () {
-        var comment = $("#add_item").val();
-        alert(comment);
-      });
-    });
+  <script src="/scripts/app-index.js">
   </script>
 </head>
 
@@ -35,7 +29,7 @@
       <label for="exampleFormControlTextarea6">Add a new item</label>
       <textarea class="form-control z-depth-1" id="add_item" rows="3" placeholder="Write something here..."></textarea>
     </div>
-    <input class="btn btn-primary" type="submit" value="Submit">
+    <input class="btn btn-primary" type="submit" value="Submit" id="submit_list">
   </div>
 
 </body>
