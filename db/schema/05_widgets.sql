@@ -1,8 +1,23 @@
--- Drop and recreate Widgets table (Example)
 
-DROP TABLE IF EXISTS widgets CASCADE;
-CREATE TABLE widgets (
+
+
+DROP TABLE IF EXISTS lists_type CASCADE;
+CREATE TABLE IF NOT EXISTS lists_type (
   id SERIAL PRIMARY KEY NOT NULL,
-  user_id INTEGER REFERENCES users(id),
-  name VARCHAR(255) NOT NULL
+  name_list VARCHAR(255) NOT NULL,
+  description VARCHAR(255)
 );
+
+
+DROP TABLE IF EXISTS items CASCADE;
+CREATE TABLE IF NOT EXISTS items (
+  id SERIAL PRIMARY KEY NOT NULL,
+  user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+  list_id INTEGER REFERENCES lists_type(id),
+  date_added TIMESTAMP NOT NULL DEFAULT NOW(),
+  date_completed TIMESTAMP,
+  item VARCHAR(255) NOT NULL,
+  description VARCHAR(255)
+);
+
+
