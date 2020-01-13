@@ -16,9 +16,29 @@
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+
 </head>
+<!-- for (var key in data.messages) {
+var obj = data.messages[key];
+// ...
+} -->
 
 <body>
   <%- include('./partials/header.ejs')%>
-
+  <h3>My List</h3>
+  <table>
+    <thead>
+      <tr>
+        <th> Name</th>
+        <th> Description</th>
+        <th>Date</th>
+      </tr>
+    </thead>
+    <% for(let key in items.lists) {%>
+    <tr>
+      <td><%=  items[item].item %></td>
+      <td><%= items[item].description%></td>
+      <td><%= items[item].date_trunc></td>
+      </tr>
+  </table>
 </body>
