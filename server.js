@@ -9,6 +9,7 @@ const bodyParser = require("body-parser");
 const sass = require("node-sass-middleware");
 const app = express();
 const morgan = require('morgan');
+const processText = require('./src/wordProcessor');
 
 // PG database client/connection setup
 const { Pool } = require('pg');
@@ -49,11 +50,15 @@ app.use("/api/widgets", widgetsRoutes(db));
 app.get("/", (req, res) => {
   res.render("index");
 });
+
 app.get("/select_list", (req, res) => {
   res.render("select_list");
 });
 app.get("/edit_profile", (req, res) => {
   res.render("edit_profile");
+});
+app.get("/list", (req, res) => {
+  res.render("list");
 });
 
 app.listen(PORT, () => {
