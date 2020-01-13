@@ -65,6 +65,7 @@ app.get("/list", (req, res) => {
 FROM items as a
 JOIN lists_type as b  on a.list_id = b.id
 WHERE a.date_completed is null and user_id = "$good_user" and list_id = "$good_list"*/
+
 app.get("/list/:listId", (req, res) => {
   let listId = req.params.listId;
   let query = {
@@ -74,7 +75,7 @@ app.get("/list/:listId", (req, res) => {
   };
   return db.query(query).then(data => {
     const lists = data.rows;
-    console.log( lists );
+    console.log(lists);
     res.render('list', { lists });
   });
 
@@ -90,10 +91,10 @@ const sortItem = function (value) {
     table = 2;
   }
   else if (value === "buy") {
-    table = 3;
+    table = 4;
   }
   else if (value === "eat") {
-    table = 4;
+    table = 3;
   }
   else {
     //call api

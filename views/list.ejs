@@ -16,29 +16,31 @@
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
-
+  <script src="/scripts/app-list.js"></script>
 </head>
-<!-- for (var key in data.messages) {
-var obj = data.messages[key];
-// ...
-} -->
 
 <body>
   <%- include('./partials/header.ejs')%>
   <h3>My List</h3>
-  <table>
+  <table class="table">
     <thead>
       <tr>
-        <th> Name</th>
-        <th> Description</th>
-        <th>Date</th>
+        <th scope="col"> Name</th>
+        <th cope="col">Date</thscope="col">
+        <th scope="col">Edit</th>
       </tr>
     </thead>
-    <% for(let key in items.lists) {%>
+    <% for(let list in lists) {%>
     <tr>
-      <td><%=  items[item].item %></td>
-      <td><%= items[item].description%></td>
-      <td><%= items[item].date_trunc></td>
-      </tr>
+      <td><%=  lists[list].item %></td>
+      <td><%= lists[list].date_trunc %></td>
+
+      <form method="GET" action="/list/<%= list %>">
+        <td> <button type="submit" id="edit">Edit</button></td>
+        <p id="alert_message"></p>
+      </form>
+    </tr>
+    <% }%>
+
   </table>
 </body>
