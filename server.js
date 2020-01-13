@@ -61,6 +61,40 @@ app.get("/list", (req, res) => {
   res.render("list");
 });
 
+
+const sortItem = function (value) {
+  let table = 0;
+  if (value === "watch") {
+    table = 1;
+  }
+  else if (value === "read") {
+    table = 2;
+  }
+  else if (value === "buy") {
+    table = 3;
+  }
+  else if (value === "eat") {
+    table = 4;
+  }
+  else {
+    //call api
+  }
+  return table;
+
+};
+app.post("/items", (req, res) => {
+  console.log(req.body.comment);
+  var comment = req.body.comment;
+  var arr = comment.split(' ');
+  var firstword = arr[0].toLowerCase();
+  const table = sortItem(firstword);
+  let query = {
+    text: 'INSERT INTO items (user_id,list_id,item) VALUES ($1 ,$2 ,$3) RETURNING *;',
+    values: [1, table, comment]
+  };
+  return db.query(query).then(dbRes => res.send(201));
+})
+
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}`);
 });
