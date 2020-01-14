@@ -67,7 +67,7 @@ app.get("/list", (req, res) => {
 app.get("/list/:listId", (req, res) => {
   let listId = req.params.listId;
   let query = {
-    text: `SELECT a.item, a.description, date_trunc('day',a.date_added), a.list_id, a.id  FROM items as a
+    text: `SELECT a.item, a.description, date_trunc('day',a.date_added), a.list_id, a.id  ,b.name_list FROM items as a
     JOIN lists_type as b  on a.list_id = b.id
     WHERE a.date_completed is null and user_id = $1 and list_id = $2;`, values: [1, Number(listId)]
   };
@@ -79,18 +79,19 @@ app.get("/list/:listId", (req, res) => {
 
 });
 
-//edit list
-app.post("/list/:listId", (req, res) => {
+//edit item
+app.post("/item/:itemId", (req, res) => {
   console.log(req.body);
-  let listId = req.params.listId;
-  const { item, description, date_trunc, list_id, id } = req.body;
+  let itemId = req.params.itemId;
+  const { list_id } = req.body;
   console.log("body ===>", req.body)
   let query = {
-    text: `UPDATE items SET item=$1, description=$2 ,list_id=$3 WHERE id=$4 ;`, values: [item, description, listId, Number(id)]
+    text: `UPDATE items SET list_id=$1 WHERE id=$2 ;`, values: [list_id, itemId]
   };
   return db.query(query).then(data => {
     const lists = data.rows;
-    res.render('list', { lists });
+
+    res.redirect('/list/' + list_id);
   });
 
 });
