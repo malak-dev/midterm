@@ -16,7 +16,6 @@
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
-  <script src="/scripts/app-list.js"></script>
 </head>
 
 <body>
@@ -39,7 +38,7 @@
       <td><%= lists[list].list_id %></td>
 
       <td>
-        <form method="post" action="/list/<%= lists[list].list_id %><">
+        <form method="post" action="/list/<%= lists[list].list_id %>">
           <div class="dropdown">
             <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
               Edit

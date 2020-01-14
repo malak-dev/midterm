@@ -52,6 +52,7 @@ app.get("/", (req, res) => {
 });
 
 app.get("/select_list", (req, res) => {
+
   res.render("select_list");
 });
 app.get("/edit_profile", (req, res) => {
@@ -62,7 +63,7 @@ app.get("/list", (req, res) => {
 });
 
 
-// send the list for list.ejs
+// send the list to list.ejs
 app.get("/list/:listId", (req, res) => {
   let listId = req.params.listId;
   let query = {
@@ -72,25 +73,38 @@ app.get("/list/:listId", (req, res) => {
   };
   return db.query(query).then(data => {
     const lists = data.rows;
-    console.log(lists);
+
     res.render('list', { lists });
   });
 
 });
-// SET name = '$ new name', description = '$ new description' , list_id = '$ updated list'
-// WHERE id = '$ id updated'
+
+//edit list
 app.post("/list/:listId", (req, res) => {
+  console.log(req.body);
+  let listId = req.params.listId;
   const { item, description, date_trunc, list_id, id } = req.body;
   console.log("body ===>", req.body)
   let query = {
-    text: `UPDATE INTO items (user_id,list_id,item) VALUES ($1 ,$2 ,$3) RETURNING *; `, values: [Number(id), Number(listId), item]
+    text: `UPDATE items SET item=$1, description=$2 ,list_id=$3 WHERE id=$4 ;`, values: [item, description, listId, Number(id)]
   };
   return db.query(query).then(data => {
     const lists = data.rows;
-    console.log(lists);
     res.render('list', { lists });
   });
 
+});
+
+//edit profile
+app.post("/edit_profile/:userId", (req, res) => {
+  let userId = req.params.userId;
+  const { email, password, first_name, last_name, number } = req.body;
+  console.log(req.body)
+  let query = {
+    text: `UPDATE  users SET email =$1 ,password=$2 ,first_name=$3 ,last_name=$4 ,phone_number=$5  WHERE id=$6 ;`,
+    values: [email, password, first_name, last_name, Number(number), userId]
+  };
+  return db.query(query).then(dbRes => res.redirect('/'));
 })
 // function for testing the value
 const sortItem = function (value) {
