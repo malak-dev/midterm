@@ -16,9 +16,40 @@
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+  <script src="/scripts/app-list.js"></script>
 </head>
 
 <body>
   <%- include('./partials/header.ejs')%>
+  <h3>My List</h3>
+  <table class="table">
+    <thead>
+      <tr>
+        <th scope="col"> Name</th>
+        <th cope="col">Date</thscope="col">
+        <th scope="col">Edit</th>
+      </tr>
+    </thead>
+    <% for(let list in lists) {%>
+    <tr>
+      <td><%=  lists[list].item %></td>
+      <td><%= lists[list].date_trunc %></td>
 
+      <td>
+        <div class="dropdown">
+          <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
+            Edit
+          </button>
+          <div class="dropdown-menu">
+            <h3 class="dropdown-header">Move to</h3>
+            <a class="dropdown-item" href="#">Book</a>
+            <a class="dropdown-item" href="#">Restaurant </a>
+            <a class="dropdown-item" href="#">product </a>
+          </div>
+        </div>
+      </td>
+    </tr>
+    <% }%>
+
+  </table>
 </body>
