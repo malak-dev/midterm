@@ -61,15 +61,12 @@ app.get("/list", (req, res) => {
   res.render("list");
 });
 
-/*SELECT a.item, a.description, date_trunc('date',a.date_added)
-FROM items as a
-JOIN lists_type as b  on a.list_id = b.id
-WHERE a.date_completed is null and user_id = "$good_user" and list_id = "$good_list"*/
 
+// send the list for list.ejs
 app.get("/list/:listId", (req, res) => {
   let listId = req.params.listId;
   let query = {
-    text: `SELECT a.item, a.description, date_trunc('day',a.date_added) FROM items as a
+    text: `SELECT a.item, a.description, date_trunc('day',a.date_added), a.list_id, a.id  FROM items as a
     JOIN lists_type as b  on a.list_id = b.id
     WHERE a.date_completed is null and user_id = $1 and list_id = $2;`, values: [1, Number(listId)]
   };
@@ -80,12 +77,26 @@ app.get("/list/:listId", (req, res) => {
   });
 
 });
+// SET name = '$ new name', description = '$ new description' , list_id = '$ updated list'
+// WHERE id = '$ id updated'
+app.post("/list/:listId", (req, res) => {
+  const { item, description, date_trunc, list_id, id } = req.body;
+  console.log("body ===>", req.body)
+  let query = {
+    text: `UPDATE INTO items (user_id,list_id,item) VALUES ($1 ,$2 ,$3) RETURNING *; `, values: [Number(id), Number(listId), item]
+  };
+  return db.query(query).then(data => {
+    const lists = data.rows;
+    console.log(lists);
+    res.render('list', { lists });
+  });
 
+})
 // function for testing the value
 const sortItem = function (value) {
   let table = 0;
   if (value === "watch") {
-    table = 1;
+    table = 1
   }
   else if (value === "read") {
     table = 2;
