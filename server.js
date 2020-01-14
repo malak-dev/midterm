@@ -43,6 +43,11 @@ app.use("/api/users", usersRoutes(db));
 app.use("/api/widgets", widgetsRoutes(db));
 // Note: mount other resources here, using the same pattern above
 
+// connect to API
+//const request = require("request");
+const requestApi = require('./wordsapi.js');
+
+
 
 // Home page
 // Warning: avoid creating more routes in this file!
@@ -97,8 +102,12 @@ const sortItem = function (value) {
     table = 3;
   }
   else {
-    //call api
+    // call api
+    requestApi(value,(table) => (table))
+
+
   }
+
   return table;
 
 };
@@ -108,6 +117,7 @@ app.post("/items", (req, res) => {
   var comment = req.body.comment;
   var arr = comment.split(' ');
   var firstword = arr[0].toLowerCase();
+  //
   const table = sortItem(firstword);
   let query = {
     text: 'INSERT INTO items (user_id,list_id,item) VALUES ($1 ,$2 ,$3) RETURNING *;',
