@@ -65,8 +65,10 @@ app.get("/", (req, res) => {
 });
 
 app.get("/lists", (req, res) => {
-
-  res.render("lists");
+  const templateVars = {
+    user: req.session.userId,
+  };
+  res.render("lists", templateVars);
 });
 app.get("/edit_profile", (req, res) => {
   const templateVars = {
@@ -74,14 +76,24 @@ app.get("/edit_profile", (req, res) => {
   };
   res.render("edit_profile", templateVars);
 });
+app.get('/logout', (req, res) => {
+  delete req.session.userId;
+  res.redirect('/');
+});
 
 //login page
 app.get("/login", (req, res) => {
-  res.render("login");
+  const templateVars = {
+    user: req.session.userId,
+  };
+  res.render("login", templateVars);
 })
 //register page
 app.get("/register", (req, res) => {
-  res.render("register");
+  const templateVars = {
+    user: req.session.userId,
+  };
+  res.render("register", templateVars);
 });
 
 app.post("/login", (req, res) => {
@@ -118,6 +130,7 @@ app.post("/register", (req, res) => {
 
 // send the list to list.ejs
 app.get("/lists/:listId", (req, res) => {
+
   let userId = req.session.userId;
   let listId = req.params.listId;
   let query = {
@@ -127,8 +140,11 @@ app.get("/lists/:listId", (req, res) => {
   };
   return db.query(query).then(data => {
     const lists = data.rows;
-
-    res.render('list', { lists });
+    let templateVars = {
+      lists: data.rows,
+      user: req.session.userId
+    }
+    res.render('list', templateVars);
   });
 
 });
@@ -211,7 +227,6 @@ app.post("/items", (req, res) => {
     return db.query(query).then(dbRes => res.send(201));
   }
 });
-
 
 
 app.listen(PORT, () => {
