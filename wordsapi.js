@@ -7,6 +7,7 @@ const requestApi = function(value,cb) {
 //const value = 'purchase'
 const wordToSearch = value
 //GET https://wordsapiv1.p.mashape.com/words/{word}
+
 const options = {
   method: 'GET',
   url: `https://wordsapiv1.p.rapidapi.com/words/${wordToSearch}/synonyms`,
@@ -21,7 +22,7 @@ request(options, function (error, response, body) {
   if (error) throw new Error(error);
   //console.log(error)
   const data = JSON.parse(body)
-
+ 
   console.log(data.message)
   console.log(data.synonyms)
 
