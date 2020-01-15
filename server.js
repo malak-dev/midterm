@@ -81,16 +81,13 @@ app.get("/list/:listId", (req, res) => {
 
 //edit item
 app.post("/item/:itemId", (req, res) => {
-  console.log(req.body);
   let itemId = req.params.itemId;
   const { list_id } = req.body;
-  console.log("body ===>", req.body)
+
   let query = {
     text: `UPDATE items SET list_id=$1 WHERE id=$2 ;`, values: [list_id, itemId]
   };
   return db.query(query).then(data => {
-    const lists = data.rows;
-
     res.redirect('/list/' + list_id);
   });
 
@@ -138,6 +135,17 @@ app.post("/items", (req, res) => {
   let query = {
     text: 'INSERT INTO items (user_id,list_id,item) VALUES ($1 ,$2 ,$3) RETURNING *;',
     values: [1, table, comment]
+  };
+  return db.query(query).then(dbRes => res.redirect('/list/' + table));
+})
+app.get("/register", (req, res) => {
+  res.render("register");
+});
+app.post("/register", (req, res) => {
+  const { email, password, first_name, last_name, number } = req.body;
+  let query = {
+    text: 'INSERT INTO users(email, password, first_name, last_name, phone_number) VALUES ($1 ,$2 ,$3 ,$4 ,$5) RETURNING *;',
+    values: [email, password, first_name, last_name, number]
   };
   return db.query(query).then(dbRes => res.send(201));
 })
