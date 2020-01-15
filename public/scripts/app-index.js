@@ -11,6 +11,7 @@ $(() => {
 
     $.post('/items', { comment }, function (data) {
       console.log(data);
+
     }).then(data => {
       console.log(data.err)
       if (data.err === true) {

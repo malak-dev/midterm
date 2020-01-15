@@ -57,6 +57,7 @@ app.get("/", (req, res) => {
 });
 
 app.get("/select_list", (req, res) => {
+
   res.render("select_list");
 });
 app.get("/edit_profile", (req, res) => {
@@ -66,31 +67,53 @@ app.get("/list", (req, res) => {
   res.render("list");
 });
 
-/*SELECT a.item, a.description, date_trunc('date',a.date_added)
-FROM items as a
-JOIN lists_type as b  on a.list_id = b.id
-WHERE a.date_completed is null and user_id = "$good_user" and list_id = "$good_list"*/
 
+// send the list to list.ejs
 app.get("/list/:listId", (req, res) => {
   let listId = req.params.listId;
   let query = {
-    text: `SELECT a.item, a.description, date_trunc('day',a.date_added) FROM items as a
+    text: `SELECT a.item, a.description, date_trunc('day',a.date_added), a.list_id, a.id  ,b.name_list FROM items as a
     JOIN lists_type as b  on a.list_id = b.id
     WHERE a.date_completed is null and user_id = $1 and list_id = $2;`, values: [1, Number(listId)]
   };
   return db.query(query).then(data => {
     const lists = data.rows;
-    console.log(lists);
+
     res.render('list', { lists });
   });
 
 });
 
+//edit item
+app.post("/item/:itemId", (req, res) => {
+  let itemId = req.params.itemId;
+  const { list_id } = req.body;
+
+  let query = {
+    text: `UPDATE items SET list_id=$1 WHERE id=$2 ;`, values: [list_id, itemId]
+  };
+  return db.query(query).then(data => {
+    res.redirect('/list/' + list_id);
+  });
+
+});
+
+//edit profile
+app.post("/edit_profile/:userId", (req, res) => {
+  let userId = req.params.userId;
+  const { email, password, first_name, last_name, number } = req.body;
+  console.log(req.body)
+  let query = {
+    text: `UPDATE  users SET email =$1 ,password=$2 ,first_name=$3 ,last_name=$4 ,phone_number=$5  WHERE id=$6 ;`,
+    values: [email, password, first_name, last_name, Number(number), userId]
+  };
+  return db.query(query).then(dbRes => res.redirect('/'));
+})
 // function for testing the value
 const sortItem = function (value) {
   let table = 0;
   if (value === "watch") {
-    table = 1;
+    table = 1
   }
   else if (value === "read") {
     table = 2;
@@ -115,20 +138,20 @@ app.post("/items", (req, res) => {
   var firstword = arr[0].toLowerCase();
   const table = sortItem(firstword);
   console.log(table);
-
   if (table === 0) {
-    requestApi(firstword,(tableApi) => {
+    requestApi(firstword, (tableApi) => {
       console.log(tableApi)
       if (tableApi === 5 || tableApi === 6 ) {
         console.log("error list - can't put word in the list")
-        return res.json({err: true, msg:"please change the description"})
+        return res.json({ err: true, msg: "please change the description" })
       }
       else {
-      let query = {
-        text: 'INSERT INTO items (user_id,list_id,item) VALUES ($1 ,$2 ,$3) RETURNING *;',
-        values: [1, tableApi, comment]
+        let query = {
+          text: 'INSERT INTO items (user_id,list_id,item) VALUES ($1 ,$2 ,$3) RETURNING *;',
+          values: [1, tableApi, comment]
+        };
+        return db.query(query).then(dbRes => res.send(201))
       };
-      return db.query(query).then(dbRes => res.send(201))};
     })
 
   } else {
@@ -138,8 +161,21 @@ app.post("/items", (req, res) => {
     };
     return db.query(query).then(dbRes => res.send(201));
   }
+});
 
-})
+//register page
+app.get("/register", (req, res) => {
+  res.render("register");
+});
+// insert the new user into the database
+app.post("/register", (req, res) => {
+  const { email, password, first_name, last_name, number } = req.body;
+  let query = {
+    text: 'INSERT INTO users(email, password, first_name, last_name, phone_number) VALUES ($1 ,$2 ,$3 ,$4 ,$5) RETURNING *;',
+    values: [email, password, first_name, last_name, number]
+  };
+  return db.query(query).then(dbRes => res.send(201));
+});
 
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}`);

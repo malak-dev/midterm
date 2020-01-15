@@ -16,40 +16,38 @@
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
-  <script src="/scripts/app-list.js"></script>
 </head>
 
 <body>
   <%- include('./partials/header.ejs')%>
-  <h3>My List</h3>
+  <h3>My <%=lists[0].name_list%> list</h3>
   <table class="table">
     <thead>
       <tr>
         <th scope="col"> Name</th>
         <th cope="col">Date</thscope="col">
-        <th scope="col">Edit</th>
+        <th scope="col">Category</th>
       </tr>
     </thead>
+    <!-- loop inside the object  -->
     <% for(let list in lists) {%>
     <tr>
-      <td><%=  lists[list].item %></td>
+      <td><%= lists[list].item %></td>
       <td><%= lists[list].date_trunc %></td>
-
       <td>
-        <div class="dropdown">
-          <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
-            Edit
-          </button>
-          <div class="dropdown-menu">
-            <h3 class="dropdown-header">Move to</h3>
-            <a class="dropdown-item" href="#">Book</a>
-            <a class="dropdown-item" href="#">Restaurant </a>
-            <a class="dropdown-item" href="#">product </a>
-          </div>
-        </div>
+        <form method="POST" action="/item/<%=lists[list].id %>">
+
+          <select name="list_id">
+            <option value="1">Movies</option>
+            <option value="4">Restaurants</option>
+            <option value="3">Products</option>
+            <option value="2">books</option>
+          </select>
+          <button type="submit" class="btn btn-primary">update </button>
+        </form>
       </td>
+
     </tr>
     <% }%>
-
   </table>
 </body>

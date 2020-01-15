@@ -20,7 +20,7 @@ VALUES ("$good_user", "$good_list", '$ value entered');
 
 --- Edit item on the list
 UPDATE items
-SET name = '$ new name', description = '$ new description' , list_id = '$ updated list'
+SET item = '$ new name', description = '$ new description' , list_id = '$ updated list'
 WHERE id = '$ id updated'  ---and user_id = "$good_user" and list_id = "$good_list"
 
 --- Delete item on the list
