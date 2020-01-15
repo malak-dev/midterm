@@ -22,7 +22,7 @@ request(options, function (error, response, body) {
   if (error) throw new Error(error);
   //console.log(error)
   const data = JSON.parse(body)
- 
+
   console.log(data.message)
   console.log(data.synonyms)
 

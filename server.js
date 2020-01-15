@@ -78,7 +78,7 @@ app.get("/list/:listId", (req, res) => {
   };
   return db.query(query).then(data => {
     const lists = data.rows;
-
+console.log(lists);
     res.render('list', { lists });
   });
 
@@ -124,6 +124,8 @@ const sortItem = function (value) {
   else if (value === "buy") {
     table = 3;
   }
+  else if(value ==="")
+  {table=5;}
   return table;
 }
 

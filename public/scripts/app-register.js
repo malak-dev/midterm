@@ -15,6 +15,10 @@ $(() => {
       $('#passwordmsg').text('please enter your password');
 
     }
+    else {
+      $('#register').append("<p> your item is added </p>").addClass("alert alert-success")
+
+    }
     $.post('/register', { email, password, first_name, last_name, number }, function (data) {
       console.log(data);
     }).then(data => {

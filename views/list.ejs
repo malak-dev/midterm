@@ -33,7 +33,7 @@
     <% for(let list in lists) {%>
     <tr>
       <td><%= lists[list].item %></td>
-      <td><%= lists[list].date_trunc %></td>
+      <td><%= new Date(lists[list].date_trunc).toDateString() %></td>
       <td>
         <form method="POST" action="/item/<%=lists[list].id %>">
 
