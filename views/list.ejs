@@ -20,7 +20,8 @@
 
 <body>
   <%- include('./partials/header.ejs')%>
-  <h3>My <%=lists[0].name_list%> list</h3>
+  
+  <h3> My <%= lists[0].name_list %> List</h3>
   <table class="table">
     <thead>
       <tr>
@@ -29,6 +30,7 @@
         <th scope="col">Category</th>
       </tr>
     </thead>
+
     <!-- loop inside the object  -->
     <% for(let list in lists) {%>
     <tr>

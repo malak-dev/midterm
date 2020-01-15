@@ -53,6 +53,25 @@ app.use("/api/widgets", widgetsRoutes(db));
 const requestApi = require('./wordsapi.js');
 
 
+// function for testing the value
+const sortItem = function (value) {
+  let table = 0;
+  if (value === "watch") {
+    table = 1
+  }
+  else if (value === "read") {
+    table = 2;
+  }
+  else if (value === "eat") {
+    table = 4;
+  }
+  else if (value === "buy") {
+    table = 3;
+  }
+  return table;
+}
+
+
 
 // Home page
 // Warning: avoid creating more routes in this file!
@@ -70,12 +89,49 @@ app.get("/lists", (req, res) => {
   };
   res.render("lists", templateVars);
 });
+
+
+app.get("/lists/:listId", (req, res) => {
+
+  let userId = req.session.userId;
+  let listId = req.params.listId;
+  let query = {
+    text: `SELECT a.item, a.description, date_trunc('day',a.date_added), a.list_id, a.id  ,b.name_list FROM items as a
+    JOIN lists_type as b  on a.list_id = b.id
+    WHERE a.date_completed is null and user_id = $1 and list_id = $2 ;`, values: [userId, Number(listId)]
+  };
+
+  console.log(userId, listId);
+  return db.query(query).then(data => {
+    const templateVars = {
+      user: req.session.userId,
+      lists: data.rows
+    };
+    res.render('list', templateVars);
+  });
+});
+
+
 app.get("/edit_profile", (req, res) => {
   const templateVars = {
     user: req.session.userId,
   };
   res.render("edit_profile", templateVars);
 });
+
+//edit profile
+app.post("/edit_profile/:userId", (req, res) => {
+  let userId = req.params.userId;
+  const { email, password, first_name, last_name, number } = req.body;
+  console.log(req.body)
+  let query = {
+    text: `UPDATE  users SET email =$1 ,password=$2 ,first_name=$3 ,last_name=$4 ,phone_number=$5  WHERE id=$6 ;`,
+    values: [email, password, first_name, last_name, Number(number), userId]
+  };
+  return db.query(query).then(dbRes => res.redirect('/'));
+});
+
+
 app.get('/logout', (req, res) => {
   delete req.session.userId;
   res.redirect('/');
@@ -88,13 +144,6 @@ app.get("/login", (req, res) => {
   };
   res.render("login", templateVars);
 })
-//register page
-app.get("/register", (req, res) => {
-  const templateVars = {
-    user: req.session.userId,
-  };
-  res.render("register", templateVars);
-});
 
 app.post("/login", (req, res) => {
   const { email, password } = req.body;
@@ -117,6 +166,15 @@ app.post("/login", (req, res) => {
   });
 })
 
+
+//register page
+app.get("/register", (req, res) => {
+  const templateVars = {
+    user: req.session.userId,
+  };
+  res.render("register", templateVars);
+});
+
 // insert the new user into the database
 app.post("/register", (req, res) => {
   const { email, password, first_name, last_name, number } = req.body;
@@ -129,25 +187,7 @@ app.post("/register", (req, res) => {
 })
 
 // send the list to list.ejs
-app.get("/lists/:listId", (req, res) => {
 
-  let userId = req.session.userId;
-  let listId = req.params.listId;
-  let query = {
-    text: `SELECT a.item, a.description, date_trunc('day',a.date_added), a.list_id, a.id  ,b.name_list FROM items as a
-    JOIN lists_type as b  on a.list_id = b.id
-    WHERE a.date_completed is null and user_id = $1 and list_id = $2;`, values: [userId, Number(listId)]
-  };
-  return db.query(query).then(data => {
-    const lists = data.rows;
-    let templateVars = {
-      lists: data.rows,
-      user: req.session.userId
-    }
-    res.render('list', templateVars);
-  });
-
-});
 
 //edit item
 app.post("/item/:itemId", (req, res) => {
@@ -163,40 +203,14 @@ app.post("/item/:itemId", (req, res) => {
 
 });
 
-//edit profile
-app.post("/edit_profile/:userId", (req, res) => {
-  let userId = req.params.userId;
-  const { email, password, first_name, last_name, number } = req.body;
-  console.log(req.body)
-  let query = {
-    text: `UPDATE  users SET email =$1 ,password=$2 ,first_name=$3 ,last_name=$4 ,phone_number=$5  WHERE id=$6 ;`,
-    values: [email, password, first_name, last_name, Number(number), userId]
-  };
-  return db.query(query).then(dbRes => res.redirect('/'));
-})
-// function for testing the value
-const sortItem = function (value) {
-  let table = 0;
-  if (value === "watch") {
-    table = 1
-  }
-  else if (value === "read") {
-    table = 2;
-  }
-  else if (value === "eat") {
-    table = 4;
-  }
-  else if (value === "buy") {
-    table = 3;
-  }
-  return table;
-}
+
 
 // call api
 //requestApi(value,(table) => (table))
 
 // add the item to the database and send 201 to jquery
 app.post("/items", (req, res) => {
+  let userId = req.session.userId;
   console.log(req.body.comment);
   var comment = req.body.comment;
   var arr = comment.split(' ');
@@ -213,7 +227,7 @@ app.post("/items", (req, res) => {
       else {
         let query = {
           text: 'INSERT INTO items (user_id,list_id,item) VALUES ($1 ,$2 ,$3) RETURNING *;',
-          values: [1, tableApi, comment]
+          values: [userId, tableApi, comment]
         };
         return db.query(query).then(dbRes => res.send(201))
       };
@@ -222,7 +236,7 @@ app.post("/items", (req, res) => {
   } else {
     let query = {
       text: 'INSERT INTO items (user_id,list_id,item) VALUES ($1 ,$2 ,$3) RETURNING *;',
-      values: [1, table, comment]
+      values: [userId, table, comment]
     };
     return db.query(query).then(dbRes => res.send(201));
   }

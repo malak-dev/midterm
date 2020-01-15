@@ -17,6 +17,7 @@ $(() => {
     }
 
     if (email && password) {
+      $('#succes').text("your account is added").addClass("alert alert-success");
       $.post('/register', { email, password, first_name, last_name, number }, function (data) {
         console.log(data);
       }).then(data => {
