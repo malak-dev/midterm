@@ -12,8 +12,14 @@ $(() => {
     $.post('/items', { comment }, function (data) {
       console.log(data);
     }).then(data => {
+      console.log(data.err)
+      if (data.err === true) {
+      $('#errorMsg').text('Can\'t add the item: Please modify your description');
+      }
+      else {
       console.log("...",data);
       console.log("request complete data");
+      }
     }).catch(err => {
       console.log(err);
     });

@@ -121,7 +121,7 @@ app.post("/items", (req, res) => {
       console.log(tableApi)
       if (tableApi === 5) {
         console.log("error list - can't put word in the list")
-        return res.json({err:true, msg:"please change the description"})
+        return res.json({err: true, msg:"please change the description"})
       }
       else {
       let query = {
