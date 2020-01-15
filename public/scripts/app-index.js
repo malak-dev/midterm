@@ -6,6 +6,7 @@ $(() => {
     var comment = $("#add_item").val();
     console.log(comment);
     if (!comment) {
+      //$('#addNewItem').remove("<p></p>")
       $('#addNewItem').append("<p> You Can not Add an Empty Item </p>").addClass("alert alert-danger")
     }
     if(comment){

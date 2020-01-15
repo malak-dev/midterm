@@ -7,7 +7,7 @@ $(() => {
     var first_name = $('#first_name').val();
     var last_name = $('#last_name').val();
     var number = $('#number')
-
+     
     if (!email) {
       $('#emailmsg').text('please enter your email');
     }
