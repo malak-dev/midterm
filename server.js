@@ -96,10 +96,10 @@ const sortItem = function (value) {
     table = 2;
   }
   else if (value === "eat") {
-    table = 3;
+    table = 4;
   }
   else if (value === "buy") {
-    table = 4;
+    table = 3;
   }
   return table;
 }
@@ -119,7 +119,7 @@ app.post("/items", (req, res) => {
   if (table === 0) {
     requestApi(firstword,(tableApi) => {
       console.log(tableApi)
-      if (tableApi === 5) {
+      if (tableApi === 5 || tableApi === 6 ) {
         console.log("error list - can't put word in the list")
         return res.json({err: true, msg:"please change the description"})
       }
