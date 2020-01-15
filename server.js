@@ -204,6 +204,25 @@ app.post("/item/:itemId", (req, res) => {
 });
 
 
+// function for testing the value
+const sortItem = function (value) {
+  let table = 0;
+  if (value === "watch") {
+    table = 1
+  }
+  else if (value === "read") {
+    table = 2;
+  }
+  else if (value === "eat") {
+    table = 4;
+  }
+  else if (value === "buy") {
+    table = 3;
+  }
+  else if(value ==="")
+  {table=5;}
+  return table;
+}
 
 // call api
 //requestApi(value,(table) => (table))
@@ -220,7 +239,7 @@ app.post("/items", (req, res) => {
   if (table === 0) {
     requestApi(firstword, (tableApi) => {
       console.log(tableApi)
-      if (tableApi === 5) {
+      if (tableApi === 5 || tableApi === 6 ) {
         console.log("error list - can't put word in the list")
         return res.json({ err: true, msg: "please change the description" })
       }
