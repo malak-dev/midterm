@@ -43,6 +43,11 @@ app.use("/api/users", usersRoutes(db));
 app.use("/api/widgets", widgetsRoutes(db));
 // Note: mount other resources here, using the same pattern above
 
+// connect to API
+//const request = require("request");
+const requestApi = require('./wordsapi.js');
+
+
 
 // Home page
 // Warning: avoid creating more routes in this file!
@@ -113,18 +118,18 @@ const sortItem = function (value) {
   else if (value === "read") {
     table = 2;
   }
-  else if (value === "buy") {
-    table = 4;
-  }
   else if (value === "eat") {
     table = 3;
   }
-  else {
-    //call api
+  else if (value === "buy") {
+    table = 4;
   }
   return table;
+}
 
-};
+// call api
+//requestApi(value,(table) => (table))
+
 // add the item to the database and send 201 to jquery
 app.post("/items", (req, res) => {
   console.log(req.body.comment);
@@ -132,13 +137,33 @@ app.post("/items", (req, res) => {
   var arr = comment.split(' ');
   var firstword = arr[0].toLowerCase();
   const table = sortItem(firstword);
-  let query = {
-    text: 'INSERT INTO items (user_id,list_id,item) VALUES ($1 ,$2 ,$3) RETURNING *;',
-    values: [1, table, comment]
-  };
-  return db.query(query).then(dbRes => res.redirect('/list/' + table));
-})
-// register page
+  console.log(table);
+  if (table === 0) {
+    requestApi(firstword, (tableApi) => {
+      console.log(tableApi)
+      if (tableApi === 5) {
+        console.log("error list - can't put word in the list")
+        return res.json({ err: true, msg: "please change the description" })
+      }
+      else {
+        let query = {
+          text: 'INSERT INTO items (user_id,list_id,item) VALUES ($1 ,$2 ,$3) RETURNING *;',
+          values: [1, tableApi, comment]
+        };
+        return db.query(query).then(dbRes => res.send(201))
+      };
+    })
+
+  } else {
+    let query = {
+      text: 'INSERT INTO items (user_id,list_id,item) VALUES ($1 ,$2 ,$3) RETURNING *;',
+      values: [1, table, comment]
+    };
+    return db.query(query).then(dbRes => res.send(201));
+  }
+});
+
+//register page
 app.get("/register", (req, res) => {
   res.render("register");
 });
@@ -150,7 +175,7 @@ app.post("/register", (req, res) => {
     values: [email, password, first_name, last_name, number]
   };
   return db.query(query).then(dbRes => res.send(201));
-})
+});
 
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}`);
