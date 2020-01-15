@@ -138,9 +138,11 @@ app.post("/items", (req, res) => {
   };
   return db.query(query).then(dbRes => res.redirect('/list/' + table));
 })
+// register page
 app.get("/register", (req, res) => {
   res.render("register");
 });
+// insert the new user into the database
 app.post("/register", (req, res) => {
   const { email, password, first_name, last_name, number } = req.body;
   let query = {

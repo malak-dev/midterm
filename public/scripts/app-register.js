@@ -1,3 +1,4 @@
+
 $(() => {
   $("#register").click(function () {
     event.preventDefault();
