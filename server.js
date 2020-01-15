@@ -9,6 +9,7 @@ const bodyParser = require("body-parser");
 const sass = require("node-sass-middleware");
 const app = express();
 const morgan = require('morgan');
+const cookieSession = require('cookie-session');
 
 
 // PG database client/connection setup
@@ -31,6 +32,10 @@ app.use("/styles", sass({
   outputStyle: 'expanded'
 }));
 app.use(express.static("public"));
+app.use(cookieSession({
+  name: 'session',
+  keys: ['Iliketocookpotatoesinthedark', 'Lifeishardwhenthepotatoesarenotfreshandmushy'],
+}));
 
 // Separated Routes for each Resource
 // Note: Feel free to replace the example routes below with your own
@@ -53,28 +58,72 @@ const requestApi = require('./wordsapi.js');
 // Warning: avoid creating more routes in this file!
 // Separate them into separate routes files (see above).
 app.get("/", (req, res) => {
-  res.render("index");
+  const templateVars = {
+    user: req.session.userId,
+  };
+  res.render("index", templateVars);
 });
 
-app.get("/select_list", (req, res) => {
+app.get("/lists", (req, res) => {
 
-  res.render("select_list");
+  res.render("lists");
 });
 app.get("/edit_profile", (req, res) => {
-  res.render("edit_profile");
-});
-app.get("/list", (req, res) => {
-  res.render("list");
+  const templateVars = {
+    user: req.session.userId,
+  };
+  res.render("edit_profile", templateVars);
 });
 
+//login page
+app.get("/login", (req, res) => {
+  res.render("login");
+})
+//register page
+app.get("/register", (req, res) => {
+  res.render("register");
+});
+
+app.post("/login", (req, res) => {
+  const { email, password } = req.body;
+  console.log(req.body)
+  let query = {
+    text: 'SELECT * FROM users WHERE email LIKE $1 AND password LIKE $2 ;',
+    values: [email, password]
+  };
+  return db.query(query).then(dbRes => {
+
+    if (dbRes.rowCount === 0) {
+      console.log(dbRes);
+      res.send("you have to register")
+    }
+    else {
+      console.log(dbRes);
+      req.session.userId = dbRes.rows[0].id;
+      res.redirect('/lists');
+    }
+  });
+})
+
+// insert the new user into the database
+app.post("/register", (req, res) => {
+  const { email, password, first_name, last_name, number } = req.body;
+  console.log(req.body)
+  let query = {
+    text: 'INSERT INTO users(email, password, first_name, last_name, phone_number) VALUES ($1 ,$2 ,$3 ,$4 ,$5) RETURNING *;',
+    values: [email, password, first_name, last_name, number]
+  };
+  return db.query(query).then(dbRes => res.send(201));
+})
 
 // send the list to list.ejs
-app.get("/list/:listId", (req, res) => {
+app.get("/lists/:listId", (req, res) => {
+  let userId = req.session.userId;
   let listId = req.params.listId;
   let query = {
     text: `SELECT a.item, a.description, date_trunc('day',a.date_added), a.list_id, a.id  ,b.name_list FROM items as a
     JOIN lists_type as b  on a.list_id = b.id
-    WHERE a.date_completed is null and user_id = $1 and list_id = $2;`, values: [1, Number(listId)]
+    WHERE a.date_completed is null and user_id = $1 and list_id = $2;`, values: [userId, Number(listId)]
   };
   return db.query(query).then(data => {
     const lists = data.rows;
@@ -93,7 +142,7 @@ app.post("/item/:itemId", (req, res) => {
     text: `UPDATE items SET list_id=$1 WHERE id=$2 ;`, values: [list_id, itemId]
   };
   return db.query(query).then(data => {
-    res.redirect('/list/' + list_id);
+    res.redirect('/lists/' + list_id);
   });
 
 });
@@ -119,10 +168,10 @@ const sortItem = function (value) {
     table = 2;
   }
   else if (value === "eat") {
-    table = 3;
+    table = 4;
   }
   else if (value === "buy") {
-    table = 4;
+    table = 3;
   }
   return table;
 }
@@ -163,19 +212,7 @@ app.post("/items", (req, res) => {
   }
 });
 
-//register page
-app.get("/register", (req, res) => {
-  res.render("register");
-});
-// insert the new user into the database
-app.post("/register", (req, res) => {
-  const { email, password, first_name, last_name, number } = req.body;
-  let query = {
-    text: 'INSERT INTO users(email, password, first_name, last_name, phone_number) VALUES ($1 ,$2 ,$3 ,$4 ,$5) RETURNING *;',
-    values: [email, password, first_name, last_name, number]
-  };
-  return db.query(query).then(dbRes => res.send(201));
-});
+
 
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}`);
