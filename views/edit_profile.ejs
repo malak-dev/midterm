@@ -18,7 +18,8 @@
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
 </head>
 
-<body background="https://previews.123rf.com/images/jakkapan/jakkapan1709/jakkapan170900076/86794890-christmas-background-white-glitter-christmas-abstract-snow-with-blur-bokeh-light-background-.jpg">
+<body
+  background="https://previews.123rf.com/images/jakkapan/jakkapan1709/jakkapan170900076/86794890-christmas-background-white-glitter-christmas-abstract-snow-with-blur-bokeh-light-background-.jpg">
   <%- include('./partials/header.ejs')%>
   <div class="centerRegister">
     <h3> Edit Your Profile</h3>
@@ -27,7 +28,7 @@
         <div class="form-group">
           <label for="exampleInputEmail1">Email address</label>
           <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp"
-            placeholder="Enter email" name="email">
+            placeholder='<%= lists.email%>' name="email">
           <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
         </div>
         <div class="form-group">
@@ -36,15 +37,18 @@
         </div>
         <div class="form-group">
           <label for="exampleInputPassword1">First Name</label>
-          <input type="text" class="form-control" id="exampleInputPassword1" placeholder="first name" name="first_name">
+          <input type="text" class="form-control" id="exampleInputPassword1" placeholder="<%= lists.first_name%>"
+            name="first_name">
         </div>
         <div class="form-group">
           <label for="exampleInputPassword1">Last Name</label>
-          <input type="text" class="form-control" id="exampleInputPassword1" placeholder="last name" name="last_name">
+          <input type="text" class="form-control" id="exampleInputPassword1" placeholder="<%= lists.last_name%>"
+            name="last_name">
         </div>
         <div class="form-group">
           <label for="exampleInputPassword1">Phone Number</label>
-          <input type="number" class="form-control" id="exampleInputPassword1" placeholder="phone nubmer" name="number">
+          <input type="number" class="form-control" id="exampleInputPassword1" placeholder="<%= lists.phone_number%>"
+            name="number">
         </div>
         <button type="submit" class="btn btn-primary" id="edit_profile">Submit</button>
       </div>

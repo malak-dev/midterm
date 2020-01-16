@@ -99,10 +99,18 @@ app.get("/lists/:listId", (req, res) => {
 
 // add a edit profile page
 app.get("/edit_profile", (req, res) => {
-  const templateVars = {
-    user: req.session.userId,
+  let userId = req.session.userId;
+  let query = {
+    text: `SELECT * FROM users WHERE id=$1 ;`, values: [userId]
   };
-  res.render("edit_profile", templateVars);
+  return db.query(query).then(data => {
+    console.log(data.rows);
+    const templateVars = {
+      user: req.session.userId,
+      lists: data.rows[0]
+    }
+    res.render("edit_profile", templateVars);
+  })
 });
 
 //get the value from the user and update the database
@@ -114,7 +122,7 @@ app.post("/edit_profile/:userId", (req, res) => {
     text: `UPDATE  users SET email =$1 ,password=$2 ,first_name=$3 ,last_name=$4 ,phone_number=$5  WHERE id=$6 ;`,
     values: [email, password, first_name, last_name, Number(number), userId]
   };
-  return db.query(query).then(dbRes => res.redirect('/'));
+  return db.query(query).then(dbRes => res.redirect('/lists'));
 });
 
 //logout
