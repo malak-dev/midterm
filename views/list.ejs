@@ -20,35 +20,37 @@
 
 <body
   background="https://previews.123rf.com/images/jakkapan/jakkapan1709/jakkapan170900076/86794890-christmas-background-white-glitter-christmas-abstract-snow-with-blur-bokeh-light-background-.jpg">
-  <%- include('./partials/header.ejs')%>
-  <h3> My <%= lists[0].name_list %> List</h3>
-  <table class=" table">
-    <thead>
+  <div id="list">
+    <%- include('./partials/header.ejs')%>
+    <h3> My <%= lists[0].name_list %> List</h3>
+    <table class="table">
+      <thead>
+        <tr>
+          <th> Name</th>
+          <th>Date</th>
+          <th>Category</th>
+        </tr>
+      </thead>
+
+      <!-- loop inside the object  -->
+      <% for(let list in lists) {%>
       <tr>
-        <th scope="col"> Name</th>
-        <th cope="col">Date</th>
-        <th scope="col">Category</th>
+        <td><%= lists[list].item %></td>
+        <td><%= new Date(lists[list].date_trunc).toDateString() %></td>
+        <td>
+          <form method="POST" action="/items/item/<%=lists[list].id %>">
+
+            <select name="list_id">
+              <option value="1">Movies</option>
+              <option value="4">Restaurants</option>
+              <option value="3">Products</option>
+              <option value="2">books</option>
+            </select>
+            <button type="submit" class="btn btn-primary">update </button>
+          </form>
+        </td>
       </tr>
-    </thead>
-
-    <!-- loop inside the object  -->
-    <% for(let list in lists) {%>
-    <tr>
-      <td><%= lists[list].item %></td>
-      <td><%= new Date(lists[list].date_trunc).toDateString() %></td>
-      <td>
-        <form method="POST" action="/items/item/<%=lists[list].id %>">
-
-          <select name="list_id">
-            <option value="1">Movies</option>
-            <option value="4">Restaurants</option>
-            <option value="3">Products</option>
-            <option value="2">books</option>
-          </select>
-          <button type="submit" class="btn btn-primary">update </button>
-        </form>
-      </td>
-    </tr>
-    <% }%>
-  </table>
+      <% }%>
+    </table>
+  </div>
 </body>

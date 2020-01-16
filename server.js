@@ -57,7 +57,14 @@ app.get("/", (req, res) => {
   const templateVars = {
     user: req.session.userId,
   };
-  res.render("index", templateVars);
+  res.render("home", templateVars);
+});
+
+app.get("/addItem", (req, res) => {
+  const templateVars = {
+    user: req.session.userId,
+  };
+  res.render("addItem", templateVars);
 });
 // add a lists page
 app.get("/lists", (req, res) => {
@@ -79,7 +86,7 @@ app.get("/lists/:listId", (req, res) => {
   };
   return db.query(query).then(data => {
     if (data.rowCount === 0) {
-      res.redirect("/");
+      res.redirect("/addItem");
     } else {
       const templateVars = {
         user: req.session.userId,
@@ -140,7 +147,7 @@ app.post("/login", (req, res) => {
     else {
       console.log(dbRes);
       req.session.userId = dbRes.rows[0].id;
-      res.redirect('/lists');
+      res.redirect('/addItem');
     }
   });
 })
