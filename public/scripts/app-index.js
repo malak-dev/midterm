@@ -2,35 +2,31 @@
 $(() => {
   // catch the value from textarea and send it to back-end
   $("#submit_list").click(function () {
-   event.preventDefault();
+    event.preventDefault();
     var comment = $("#add_item").val();
     console.log(comment);
     if (!comment) {
-      //$('#addNewItem').remove("<p></p>")
-      $('#addNewItem').append("<p> You Can not Add an Empty Item </p>").addClass("alert alert-danger")
+      $('#emptymsg').text(" You Can not Add an Empty Item ").removeClass("alert alert-success").addClass("alert alert-danger");
     }
-    if(comment){
-      {
-        event.preventDefault();
-        $('#addNewItem').append("<p> your item is added </p>").addClass("alert alert-success")
-      }
+
     $.post('/items', { comment }, function (data) {
       console.log(data);
 
     }).then(data => {
       console.log(data.err)
       if (data.err === true) {
-        $('#addNewItem').append("<p> Can\'t add the item: Please modify your description </p>").addClass("alert alert-danger")
+        $('#emptymsg').text(" Can\'t add the item, Please modify your description").removeClass("alert alert-success").addClass("alert alert-danger");
 
       }
       else {
-      console.log("...",data);
-      console.log("request complete data");
+        $('#emptymsg').text("your item is added").removeClass("alert alert-danger").addClass("alert alert-success");
+        console.log(data);
+        console.log("request complete data");
       }
     }).catch(err => {
       console.log(err);
     });
-  }
+
   });
 
 });

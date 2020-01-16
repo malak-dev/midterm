@@ -50,39 +50,16 @@ app.use("/api/widgets", widgetsRoutes(db));
 
 // connect to API
 //const request = require("request");
-const requestApi = require('./wordsapi.js');
-
-
-// function for testing the value
-const sortItem = function (value) {
-  let table = 0;
-  if (value === "watch") {
-    table = 1
-  }
-  else if (value === "read") {
-    table = 2;
-  }
-  else if (value === "eat") {
-    table = 4;
-  }
-  else if (value === "buy") {
-    table = 3;
-  }
-  return table;
-}
-
-
+const { requestApi, sortItem } = require('./wordsapi.js');
 
 // Home page
-// Warning: avoid creating more routes in this file!
-// Separate them into separate routes files (see above).
 app.get("/", (req, res) => {
   const templateVars = {
     user: req.session.userId,
   };
   res.render("index", templateVars);
 });
-
+// add a lists page
 app.get("/lists", (req, res) => {
   const templateVars = {
     user: req.session.userId,
@@ -90,7 +67,7 @@ app.get("/lists", (req, res) => {
   res.render("lists", templateVars);
 });
 
-
+// show the lists for a specific user
 app.get("/lists/:listId", (req, res) => {
 
   let userId = req.session.userId;
@@ -100,18 +77,20 @@ app.get("/lists/:listId", (req, res) => {
     JOIN lists_type as b  on a.list_id = b.id
     WHERE a.date_completed is null and user_id = $1 and list_id = $2 ;`, values: [userId, Number(listId)]
   };
-
-  console.log(userId, listId);
   return db.query(query).then(data => {
-    const templateVars = {
-      user: req.session.userId,
-      lists: data.rows
-    };
-    res.render('list', templateVars);
+    if (data.rowCount === 0) {
+      res.redirect("/");
+    } else {
+      const templateVars = {
+        user: req.session.userId,
+        lists: data.rows
+      };
+      res.render('list', templateVars);
+    }
   });
 });
 
-
+// add a edit profile page
 app.get("/edit_profile", (req, res) => {
   const templateVars = {
     user: req.session.userId,
@@ -119,7 +98,7 @@ app.get("/edit_profile", (req, res) => {
   res.render("edit_profile", templateVars);
 });
 
-//edit profile
+//get the value from the user and update the database
 app.post("/edit_profile/:userId", (req, res) => {
   let userId = req.params.userId;
   const { email, password, first_name, last_name, number } = req.body;
@@ -131,10 +110,10 @@ app.post("/edit_profile/:userId", (req, res) => {
   return db.query(query).then(dbRes => res.redirect('/'));
 });
 
-
+//logout
 app.get('/logout', (req, res) => {
   delete req.session.userId;
-  res.redirect('/');
+  res.redirect('/login');
 });
 
 //login page
@@ -144,7 +123,7 @@ app.get("/login", (req, res) => {
   };
   res.render("login", templateVars);
 })
-
+// see if the user is exist in the database
 app.post("/login", (req, res) => {
   const { email, password } = req.body;
   console.log(req.body)
@@ -175,7 +154,7 @@ app.get("/register", (req, res) => {
   res.render("register", templateVars);
 });
 
-// insert the new user into the database
+// insert a new user into the database
 app.post("/register", (req, res) => {
   const { email, password, first_name, last_name, number } = req.body;
   console.log(req.body)
@@ -186,11 +165,10 @@ app.post("/register", (req, res) => {
   return db.query(query).then(dbRes => res.send(201));
 })
 
-// send the list to list.ejs
 
 
-//edit item
-app.post("/item/:itemId", (req, res) => {
+//edit item for specific itemId
+app.post("/items/item/:itemId", (req, res) => {
   let itemId = req.params.itemId;
   const { list_id } = req.body;
 
@@ -203,28 +181,8 @@ app.post("/item/:itemId", (req, res) => {
 
 });
 
-
-// function for testing the value
-const sortItem = function (value) {
-  let table = 0;
-  if (value === "watch") {
-    table = 1
-  }
-  else if (value === "read") {
-    table = 2;
-  }
-  else if (value === "eat") {
-    table = 4;
-  }
-  else if (value === "buy") {
-    table = 3;
-  }
-  else if(value ==="")
-  {table=5;}
-  return table;
-}
-
 // call api
+
 //requestApi(value,(table) => (table))
 
 // add the item to the database and send 201 to jquery
@@ -239,7 +197,7 @@ app.post("/items", (req, res) => {
   if (table === 0) {
     requestApi(firstword, (tableApi) => {
       console.log(tableApi)
-      if (tableApi === 5 || tableApi === 6 ) {
+      if (tableApi === 5 || tableApi === 6) {
         console.log("error list - can't put word in the list")
         return res.json({ err: true, msg: "please change the description" })
       }

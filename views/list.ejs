@@ -18,15 +18,15 @@
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
 </head>
 
-<body>
+<body
+  background="https://previews.123rf.com/images/jakkapan/jakkapan1709/jakkapan170900076/86794890-christmas-background-white-glitter-christmas-abstract-snow-with-blur-bokeh-light-background-.jpg">
   <%- include('./partials/header.ejs')%>
-  
   <h3> My <%= lists[0].name_list %> List</h3>
-  <table class="table">
+  <table class=" table">
     <thead>
       <tr>
         <th scope="col"> Name</th>
-        <th cope="col">Date</thscope="col">
+        <th cope="col">Date</th>
         <th scope="col">Category</th>
       </tr>
     </thead>
@@ -37,7 +37,7 @@
       <td><%= lists[list].item %></td>
       <td><%= new Date(lists[list].date_trunc).toDateString() %></td>
       <td>
-        <form method="POST" action="/item/<%=lists[list].id %>">
+        <form method="POST" action="/items/item/<%=lists[list].id %>">
 
           <select name="list_id">
             <option value="1">Movies</option>
@@ -48,7 +48,6 @@
           <button type="submit" class="btn btn-primary">update </button>
         </form>
       </td>
-
     </tr>
     <% }%>
   </table>

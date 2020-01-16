@@ -15,6 +15,10 @@
   margin-bottom: 15px;
   p{
     margin-top: 5px;
+    font-weight: bold;
+    font-family: 'Times New Roman', Times, serif;
+    text-align: center;
+    font-size: medium;
   }
 }
 .containers
@@ -27,10 +31,20 @@
 // edit_profile style
 .edit
 {
-  width: 25%;
+  width: 35%;
   margin-left: 10px;
 }
 //style the error message
 #emailmsg,#passwordmsg{
   color: red;
+}
+.centerLogin
+{
+  margin-left: 35%;
+  margin-top: 19%;
+
+}
+.centerRegister{
+  margin-left: 35%;
+  margin-top: 10%;
 }
